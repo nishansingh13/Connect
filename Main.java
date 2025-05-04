@@ -1,9 +1,12 @@
 
-import ui.MyFrame;
+import controller.ConnectController;
+import view.ConnectView;
 
-public class Main{
+public class Main {
     public static void main(String[] args) {
-        System.out.println("Starting application..");
-        new MyFrame();
+        ConnectController controller = new ConnectController();
+        ConnectView view = new ConnectView(controller);
+        view.showMenu();
     }
 }
+

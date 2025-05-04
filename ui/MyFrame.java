@@ -1,30 +1,31 @@
 package ui;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-// import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 
 public class MyFrame extends JFrame {
     public MyFrame() {
         this.setTitle("Connect");
-        this.setSize(400, 300);
+        this.setSize(400, 400);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       
+        this.setLocationRelativeTo(null);
+        this.setLayout(new BorderLayout());
 
-        ImageIcon icon = new ImageIcon("logo.jpg"); 
+        ImageIcon icon = new ImageIcon("images/logo.jpg");
         this.setIconImage(icon.getImage());
-        ImageIcon image = new ImageIcon("logo.jpg");
-        // this.getContentPane().setBackground(new Color(123, 50, 250));
 
-        JLabel label = new JLabel();
-        label.setIcon(image);
-        label.setHorizontalAlignment(JLabel.CENTER);
-        label.setVerticalAlignment(JLabel.CENTER);
-        System.out.println(getClass().getResource("/images/logo.jpg"));
+        Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        JLabel logoLabel = new JLabel(new ImageIcon(scaledImage));
+        logoLabel.setHorizontalAlignment(JLabel.CENTER);
 
-        this.add(label);
+        JLabel titleLabel = new JLabel("Welcome to Connect!");
+        // titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
 
-        this.setVisible(true); 
+
+        this.add(logoLabel, BorderLayout.NORTH);
+        // this.add(centerPanel, BorderLayout.CENTER);
+
+        this.setVisible(true);
     }
 }
