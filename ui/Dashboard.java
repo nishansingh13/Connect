@@ -60,12 +60,14 @@ public class Dashboard extends JPanel {
             if (!postContent.isEmpty()) {
                 controller.postMessage(postContent);
                 postTextField.setText("");
+                JOptionPane.showMessageDialog(this, "Posting successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        
                 refreshPosts();
                 refreshFollowingPosts();
             }
         });
 
-        newPostPanel.add(new JLabel("New Post: "), BorderLayout.WEST);
+        newPostPanel.add(new JLabel("New Post: "),BorderLayout.WEST);
         newPostPanel.add(postTextField, BorderLayout.CENTER);
         newPostPanel.add(postButton, BorderLayout.EAST);
         this.add(newPostPanel, BorderLayout.SOUTH);
