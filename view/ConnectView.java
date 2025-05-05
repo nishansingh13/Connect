@@ -1,6 +1,9 @@
 package view;
 
 import controller.ConnectController;
+import model.Post;
+import model.User;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class ConnectView {
@@ -19,7 +22,9 @@ public class ConnectView {
             System.out.println("3. Post a Message");
             System.out.println("4. View Posts");
             System.out.println("5. Follow a User");
-            System.out.println("6. Exit");
+            System.out.println("6. Get Following");
+            System.out.println("7. Get Followers");
+            System.out.println("8. Exit");
             System.out.print("Choose an option: ");
 
             int choice = scanner.nextInt();
@@ -42,7 +47,14 @@ public class ConnectView {
                     followUser();
                     break;
                 case 6:
-                    System.out.println("Goodbye!");
+                    getFollowing();
+                    break;
+                case 7:
+                    getFollowers();
+                    break;
+                case 8:
+                    System.out.println("Exiting...");
+                    scanner.close();
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");
@@ -79,28 +91,66 @@ public class ConnectView {
     }
 
     private void postMessage() {
+
         System.out.print("Enter your message: ");
         String content = scanner.nextLine();
-        System.out.print("Enter your username: ");
-        String username = scanner.nextLine();
-
-        controller.postMessage(username, content);
+        User user = controller.loggedInUser();
+        if (user == null) {
+            
+            System.out.println("You need to login first.");
+            return;
+        }
+        controller.postMessage(content);
         System.out.println("Message posted!");
     }
+    private void getFollowers(){
+        User curr = controller.loggedInUser();
+        if (curr == null) {
+            System.out.println("You need to login first.");
+            return;
+        }
+        HashSet<String> followers = controller.getFollowers(curr.getUsername());
+        if (followers != null) {
+            System.out.println("Your followers: " + followers);
+        } else {
+            System.out.println("User not found.");
+        }
 
+    }
     private void viewPosts() {
-        controller.getPosts().forEach((key, post) -> {
-            System.out.println("Post by " + key + ": " + post.getContent());
+        controller.getPosts().forEach((username, postList) -> {
+            System.out.println("Posts by " + username + ":");
+            for (Post p : postList) {
+                System.out.println("- " + p.getContent());
+            }
         });
+    }
+    
+    private void getFollowing() {
+        User curr = controller.loggedInUser();
+        if (curr == null) {
+            System.out.println("You need to login first.");
+            return;
+        }
+        
+
+        HashSet<String> following = controller.getFollowing(curr.getUsername());
+        if (following != null) {
+            System.out.println("You are following: " + following);
+        } else {
+            System.out.println("User not found.");
+        }
     }
 
     private void followUser() {
-        System.out.print("Enter your username: ");
-        String currentUsername = scanner.nextLine();
-        System.out.print("Enter the username you want to follow: ");
+        User curr = controller.loggedInUser();
+        if (curr == null) {
+            System.out.println("You need to login first.");
+            return;
+        }
+        System.out.print("Enter the username of the user you want to follow: ");    
         String usernameToFollow = scanner.nextLine();
-
-        controller.followUser(currentUsername, usernameToFollow);
+        controller.followUser(curr.getUsername(), usernameToFollow);
         System.out.println("You are now following " + usernameToFollow);
     }
 }

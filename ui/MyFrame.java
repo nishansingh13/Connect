@@ -1,31 +1,49 @@
 package ui;
 
+import controller.ConnectController;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class MyFrame extends JFrame {
-    public MyFrame() {
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
+
+    public MyFrame(ConnectController controller) {
         this.setTitle("Connect");
-        this.setSize(400, 400);
+        this.setSize(500, 500);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        this.setLayout(new BorderLayout());
 
-        ImageIcon icon = new ImageIcon("images/logo.jpg");
-        this.setIconImage(icon.getImage());
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
 
-        Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        JLabel logoLabel = new JLabel(new ImageIcon(scaledImage));
-        logoLabel.setHorizontalAlignment(JLabel.CENTER);
+        // Welcome Screen
+        JPanel welcomeScreen = new JPanel(new BorderLayout());
+        JLabel welcomeLabel = new JLabel("Welcome to Connect!", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        JButton goToRegisterButton = new JButton("Register");
+        goToRegisterButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        goToRegisterButton.setBackground(Color.pink);
+        goToRegisterButton.setForeground(Color.WHITE);
+        goToRegisterButton.setFocusPainted(false);
 
-        JLabel titleLabel = new JLabel("Welcome to Connect!");
-        // titleLabel.setHorizontalAlignment(JLabel.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        goToRegisterButton.addActionListener(e -> cardLayout.show(mainPanel, "Register"));
 
+        welcomeScreen.add(welcomeLabel, BorderLayout.CENTER);
+        welcomeScreen.add(goToRegisterButton, BorderLayout.SOUTH);
 
-        this.add(logoLabel, BorderLayout.NORTH);
-        // this.add(centerPanel, BorderLayout.CENTER);
+      
+        Register registerScreen = new Register(controller,mainPanel,cardLayout);
 
+        mainPanel.add(welcomeScreen, "WelcomeScreen");
+        mainPanel.add(registerScreen, "Register");
+       
+
+        this.add(mainPanel);
         this.setVisible(true);
+
+        // Show the WelcomeScreen by default
+        cardLayout.show(mainPanel, "WelcomeScreen");
     }
 }

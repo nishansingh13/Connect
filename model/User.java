@@ -6,11 +6,13 @@ public class User {
     private String username;
     private String password;
     private HashSet<String> following;
-
+    private HashSet<String> followers;
     public User(String username, String password) {
         this.username = username;
         this.password = password;
         this.following = new HashSet<>();
+        this.followers = new HashSet<>();
+        
     }
 
     public String getUsername() {
@@ -32,4 +34,10 @@ public class User {
     public void unfollow(String username) {
         following.remove(username);
     }
+    
+
+    public HashSet<String> getFollowers() {
+        return followers;
+    }
+
 }
