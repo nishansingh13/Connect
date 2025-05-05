@@ -24,6 +24,14 @@ public class Dashboard extends JPanel {
         this.setLayout(new BorderLayout());
 
         User loggedUser = controller.loggedInUser();
+        
+        if (loggedUser == null) {
+            // Handle the case where user isn't properly logged in
+            JOptionPane.showMessageDialog(this, 
+                "Error: No user logged in. Please log in again.",
+                "Login Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         // Header Panel
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -50,7 +58,7 @@ public class Dashboard extends JPanel {
         tabbedPane.addTab("Followers", createFollowersPanel());
         this.add(tabbedPane, BorderLayout.CENTER);
 
-        // New Post Panel
+        // New Post Panel with improved error handling
         JPanel newPostPanel = new JPanel(new BorderLayout());
         postTextField = new JTextField();
 
@@ -58,12 +66,24 @@ public class Dashboard extends JPanel {
         postButton.addActionListener((ActionEvent e) -> {
             String postContent = postTextField.getText().trim();
             if (!postContent.isEmpty()) {
-                controller.postMessage(postContent);
-                postTextField.setText("");
-                JOptionPane.showMessageDialog(this, "Posting successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        
-                refreshPosts();
-                refreshFollowingPosts();
+                try {
+                    controller.postMessage(postContent);
+                    postTextField.setText("");
+                    JOptionPane.showMessageDialog(this, "Posting successful!", 
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+            
+                    refreshPosts();
+                    refreshFollowingPosts();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, 
+                        "Error posting message: " + ex.getMessage(),
+                        "Database Error", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Post content cannot be empty", 
+                    "Error", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -72,9 +92,17 @@ public class Dashboard extends JPanel {
         newPostPanel.add(postButton, BorderLayout.EAST);
         this.add(newPostPanel, BorderLayout.SOUTH);
 
-        refreshPosts();
-        refreshFollowing();
-        refreshFollowingPosts();
+        // Make sure to handle potential database errors in all refresh methods
+        try {
+            refreshPosts();
+            refreshFollowing();
+            refreshFollowingPosts();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Error loading data: " + ex.getMessage(),
+                "Database Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
     }
 
     private JPanel createPostsPanel() {
@@ -106,11 +134,27 @@ public class Dashboard extends JPanel {
         followButton.addActionListener((ActionEvent e) -> {
             String usernameToFollow = followTextField.getText().trim();
             if (!usernameToFollow.isEmpty()) {
-                User loggedUser = controller.loggedInUser();
-                controller.followUser(loggedUser.getUsername(), usernameToFollow);
-                followTextField.setText("");
-                refreshFollowing();
-                refreshFollowingPosts();
+                try {
+                    User loggedUser = controller.loggedInUser();
+                    controller.followUser(loggedUser.getUsername(), usernameToFollow);
+                    followTextField.setText("");
+                    
+                    JOptionPane.showMessageDialog(this, 
+                        "Now following " + usernameToFollow, 
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    refreshFollowing();
+                    refreshFollowingPosts();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, 
+                        "Error following user: " + ex.getMessage(),
+                        "Database Error", JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Please enter a username to follow", 
+                    "Error", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -123,16 +167,21 @@ public class Dashboard extends JPanel {
 
     private void refreshPosts() {
         postsArea.setText("");
-        Map<String, ArrayList<Post>> allPosts = controller.getPosts();
+        try {
+            Map<String, ArrayList<Post>> allPosts = controller.getPosts();
 
-        if (allPosts.isEmpty()) {
-            postsArea.append("No posts available\n");
-        } else {
-            allPosts.forEach((username, userPosts) -> {
-                for (Post post : userPosts) {
-                    postsArea.append(username + ": " + post.getContent() + "\n\n");
-                }
-            });
+            if (allPosts.isEmpty()) {
+                postsArea.append("No posts available\n");
+            } else {
+                allPosts.forEach((username, userPosts) -> {
+                    for (Post post : userPosts) {
+                        postsArea.append(username + ": " + post.getContent() + "\n\n");
+                    }
+                });
+            }
+        } catch (Exception ex) {
+            postsArea.setText("Error loading posts from database: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 

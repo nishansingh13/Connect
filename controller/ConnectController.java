@@ -1,78 +1,111 @@
 package controller;
+
 import model.User;
 import model.Post;
+import db.DBController;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 public class ConnectController {
-    private  HashMap<String, User> users;
-    private HashMap<String, ArrayList<Post>> posts;
+    private DBController db;
     private User loggedUser;
+
     public ConnectController() {
-        users = new HashMap<>();
-        posts = new HashMap<>();
+    
+        this.db = new DBController();
+    }
+
+    // Constructor for when using database
+    public ConnectController(Connection connection) {
+       
+        this.db = new DBController();
         loggedUser = null;
     }
-    public boolean registerUser(String username , String password){
-        if(users.containsKey(username)){
-            return false; 
+    
+    // Add overloaded method that accepts email parameter
+    public boolean registerUser(String username, String email, String password) {
+        try {
+            // For backward compatibility with existing code
+            return db.registerUser(username, email, password);
+        } catch (Exception e) {
+            System.out.println("Registration error: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
-        users.put(username, new User(username, password));
-        return true; 
     }
-    public boolean loginUser(String username , String password){
-        if(users.containsKey(username)){
-            User user = users.get(username);
-            if(user.getPassword().equals(password)){
-                loggedUser = user;
-                return true; 
+    
+    // Keep original method for backward compatibility
+    public boolean registerUser(String username, String password) {
+        // Generate default email if not provided
+        String email = username + "@connect.com";
+        return registerUser(username, email, password);
+    }
+    
+    public boolean loginUser(String username, String password) {
+        try {
+       
+            if (db.validateLogin(username, password)) {
+                User user = db.getUser(username);
+                if (user != null) {
+                    loggedUser = user;
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            System.out.println("Login error: " + e.getMessage());
+            e.printStackTrace();
         }
-        return false; 
+        return false;
     }
+    
     public void postMessage(String content) {
         if (loggedUser != null) {
+            // Create a Post object and use savePost instead of addPost
             Post post = new Post(content, loggedUser.getUsername());
-            posts.putIfAbsent(loggedUser.getUsername(), new ArrayList<>());
-            posts.get(loggedUser.getUsername()).add(post);
+            db.savePost(post);
         }
     }
     
-    public HashMap <String, ArrayList<Post>> getPosts() {
-        return posts;
-    }
-    public void followUser(String username, String userToFollow) {
-        User follower = users.get(username);        
-        User followee = users.get(userToFollow);    
-    
-        if (follower != null && followee != null && !username.equals(userToFollow)) {
-            if (!follower.getFollowing().contains(userToFollow)) {
-                follower.follow(userToFollow);
-                followee.getFollowers().add(username);  
+    public HashMap<String, ArrayList<Post>> getPosts() {
+        try {
+            // Get posts from DB and properly convert from List to ArrayList
+            HashMap<String, List<Post>> originalPosts = db.getAllPostsGroupedByUser();
+            
+            // Create a new HashMap with the correct generic types
+            HashMap<String, ArrayList<Post>> convertedPosts = new HashMap<>();
+            
+            // Copy and convert each entry
+            for (Map.Entry<String, List<Post>> entry : originalPosts.entrySet()) {
+                ArrayList<Post> postsList = new ArrayList<>(entry.getValue());
+                convertedPosts.put(entry.getKey(), postsList);
             }
+            
+            return convertedPosts;
+        } catch (Exception e) {
+            System.out.println("Error fetching posts: " + e.getMessage());
+            e.printStackTrace();
+            return new HashMap<>();
         }
     }
     
-
-    public void unfollowUser(String currentUsername, String usernameToUnfollow) {
-        User currentUser = users.get(currentUsername);
-        if (currentUser != null) {
-            currentUser.unfollow(usernameToUnfollow);
-          
-        }
+    public void followUser(String username, String userToFollow) {
+        // This method name matches, no change needed
+        db.followUser(username, userToFollow);
     }
+    
     public HashSet<String> getFollowing(String username) {
-        User user = users.get(username);
-        if (user != null) {
-            return user.getFollowing();
-        }
-        return null;
+        // This method name matches, no change needed
+        return db.getFollowing(username);
     }
-    public HashSet<String>getFollowers(String username){
-        User user = users.get(username);
-        if(user!=null) return user.getFollowers();
-        return null;
+    
+    public HashSet<String> getFollowers(String username) {
+        // This method name matches, no change needed
+        return db.getFollowers(username);
     }
 
     public User loggedInUser() {

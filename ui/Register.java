@@ -13,6 +13,7 @@ public class Register extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);  
         gbc.anchor = GridBagConstraints.WEST;  
         JLabel usernameLabel = new JLabel("Username:");
+        
         usernameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         JTextField usernameField = new JTextField(20);
         usernameField.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -44,23 +45,62 @@ public class Register extends JPanel {
             String username = usernameField.getText();
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
-            if (controller.registerUser(username, password)) {
-                JOptionPane.showMessageDialog(this, "Registration successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "User already exists.", "Error", JOptionPane.ERROR_MESSAGE);
+            
+            // Validate fields
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "All fields are required", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Pass email to the registerUser method
+            try {
+                if (controller.registerUser(username, email, password)) {
+                    JOptionPane.showMessageDialog(this, "Registration successful!", 
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    // Clear fields after successful registration
+                    usernameField.setText("");
+                    emailField.setText("");
+                    passwordField.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(this, "User already exists or database error.", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Database error: " + ex.getMessage(), 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         });
 
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
-            if (controller.loginUser(username, password)) {
-                JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                Dashboard welcomePanel = new Dashboard(controller);
-                mainPanel.add(welcomePanel, "WelcomePanel");
-                cardLayout.show(mainPanel, "WelcomePanel");
-            } else {
-                JOptionPane.showMessageDialog(this, "Login failed.", "Error", JOptionPane.ERROR_MESSAGE);
+            
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Username and password are required", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            try {
+                if (controller.loginUser(username, password)) {
+                    JOptionPane.showMessageDialog(this, "Login successful!", 
+                        "Success", JOptionPane.INFORMATION_MESSAGE);
+                    Dashboard dashboardPanel = new Dashboard(controller);
+                    mainPanel.add(dashboardPanel, "WelcomePanel");
+                    cardLayout.show(mainPanel, "WelcomePanel");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Invalid username or password.", 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Database error: " + ex.getMessage(), 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         });
 
