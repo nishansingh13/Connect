@@ -6,7 +6,7 @@ import controller.ConnectController;
 
 public class Register extends JPanel {
     public Register(ConnectController controller, JPanel mainPanel, CardLayout cardLayout) {
-        // Set the layout for the Register panel
+   
         this.setLayout(new GridBagLayout());
         this.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -40,26 +40,25 @@ public class Register extends JPanel {
         loginButton.setForeground(Color.WHITE);
        
 
-        // Action for the Register button
+     
         registerButton.addActionListener(e -> {
             String username = usernameField.getText();
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
             
-            // Validate fields
             if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
                     "All fields are required", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Pass email to the registerUser method
+       
             try {
                 if (controller.registerUser(username, email, password)) {
                     JOptionPane.showMessageDialog(this, "Registration successful!", 
                         "Success", JOptionPane.INFORMATION_MESSAGE);
                     
-                    // Clear fields after successful registration
+                 
                     usernameField.setText("");
                     emailField.setText("");
                     passwordField.setText("");
@@ -71,7 +70,7 @@ public class Register extends JPanel {
                 JOptionPane.showMessageDialog(this, 
                     "Database error: " + ex.getMessage(), 
                     "Error", JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+            
             }
         });
 
@@ -100,7 +99,7 @@ public class Register extends JPanel {
                 JOptionPane.showMessageDialog(this, 
                     "Database error: " + ex.getMessage(), 
                     "Error", JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+             
             }
         });
 

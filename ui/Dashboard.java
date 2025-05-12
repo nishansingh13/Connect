@@ -78,7 +78,7 @@ public class Dashboard extends JPanel {
                     JOptionPane.showMessageDialog(this, 
                         "Error posting message: " + ex.getMessage(),
                         "Database Error", JOptionPane.ERROR_MESSAGE);
-                    ex.printStackTrace();
+                
                 }
             } else {
                 JOptionPane.showMessageDialog(this, 
@@ -101,7 +101,7 @@ public class Dashboard extends JPanel {
             JOptionPane.showMessageDialog(this, 
                 "Error loading data: " + ex.getMessage(),
                 "Database Error", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
+      
         }
     }
 
@@ -149,7 +149,7 @@ public class Dashboard extends JPanel {
                     JOptionPane.showMessageDialog(this, 
                         "Error following user: " + ex.getMessage(),
                         "Database Error", JOptionPane.ERROR_MESSAGE);
-                    ex.printStackTrace();
+                  
                 }
             } else {
                 JOptionPane.showMessageDialog(this, 
@@ -181,7 +181,7 @@ public class Dashboard extends JPanel {
             }
         } catch (Exception ex) {
             postsArea.setText("Error loading posts from database: " + ex.getMessage());
-            ex.printStackTrace();
+        
         }
     }
 

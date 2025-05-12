@@ -51,7 +51,7 @@ public class MyFrame extends JFrame {
         this.add(containerPanel);
         this.setVisible(true);
 
-        // Show the WelcomeScreen by default
+ 
         cardLayout.show(mainPanel, "WelcomeScreen");
     }
 }

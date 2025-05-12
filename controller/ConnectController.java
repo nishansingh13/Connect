@@ -20,28 +20,24 @@ public class ConnectController {
         this.db = new DBController();
     }
 
-    // Constructor for when using database
     public ConnectController(Connection connection) {
        
         this.db = new DBController();
         loggedUser = null;
     }
     
-    // Add overloaded method that accepts email parameter
     public boolean registerUser(String username, String email, String password) {
         try {
-            // For backward compatibility with existing code
+       
             return db.registerUser(username, email, password);
         } catch (Exception e) {
             System.out.println("Registration error: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
-    
-    // Keep original method for backward compatibility
+  
     public boolean registerUser(String username, String password) {
-        // Generate default email if not provided
+      
         String email = username + "@connect.com";
         return registerUser(username, email, password);
     }
@@ -58,14 +54,13 @@ public class ConnectController {
             }
         } catch (Exception e) {
             System.out.println("Login error: " + e.getMessage());
-            e.printStackTrace();
+           
         }
         return false;
     }
     
     public void postMessage(String content) {
         if (loggedUser != null) {
-            // Create a Post object and use savePost instead of addPost
             Post post = new Post(content, loggedUser.getUsername());
             db.savePost(post);
         }
@@ -73,13 +68,12 @@ public class ConnectController {
     
     public HashMap<String, ArrayList<Post>> getPosts() {
         try {
-            // Get posts from DB and properly convert from List to ArrayList
+           
             HashMap<String, List<Post>> originalPosts = db.getAllPostsGroupedByUser();
             
-            // Create a new HashMap with the correct generic types
+          
             HashMap<String, ArrayList<Post>> convertedPosts = new HashMap<>();
             
-            // Copy and convert each entry
             for (Map.Entry<String, List<Post>> entry : originalPosts.entrySet()) {
                 ArrayList<Post> postsList = new ArrayList<>(entry.getValue());
                 convertedPosts.put(entry.getKey(), postsList);
@@ -94,17 +88,16 @@ public class ConnectController {
     }
     
     public void followUser(String username, String userToFollow) {
-        // This method name matches, no change needed
         db.followUser(username, userToFollow);
     }
     
     public HashSet<String> getFollowing(String username) {
-        // This method name matches, no change needed
+       
         return db.getFollowing(username);
     }
     
     public HashSet<String> getFollowers(String username) {
-        // This method name matches, no change needed
+    
         return db.getFollowers(username);
     }
 

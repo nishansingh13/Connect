@@ -19,7 +19,7 @@ public class DBController {
             createPostTable();
             createFollowTable();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error "+e.getMessage());
         }
     }
 
@@ -70,12 +70,12 @@ public class DBController {
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error "+e.getMessage());
             return false;
         }
     }
 
-    // Add this method if it doesn't exist
+  
     public boolean registerUser(String username, String email, String password) {
         if (getUser(username) != null) return false;
 
@@ -87,7 +87,7 @@ public class DBController {
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error "+e.getMessage());
             return false;
         }
     }
@@ -102,7 +102,7 @@ public class DBController {
                 return new User(username, password);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error "+e.getMessage());
         }
         return null;
     }
@@ -115,7 +115,7 @@ public class DBController {
             ResultSet rs = stmt.executeQuery();
             return rs.next(); 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error "+e.getMessage());
             return false;
         }
     }
@@ -129,7 +129,7 @@ public class DBController {
             stmt.setString(2, post.getAuthor());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error "+e.getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ public class DBController {
                 postsByUser.computeIfAbsent(author, k -> new ArrayList<>()).add(post);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error "+e.getMessage());
         }
         return postsByUser;
     }
@@ -160,7 +160,7 @@ public class DBController {
             stmt.setString(2, followee);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error "+e.getMessage());
         }
     }
 
@@ -174,7 +174,7 @@ public class DBController {
                 followers.add(rs.getString("follower"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error fetching followers "+e.getMessage());
         }
         return followers;
     }
@@ -189,7 +189,7 @@ public class DBController {
                 following.add(rs.getString("followee"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error "+e.getMessage());
         }
         return following;
     }

@@ -40,7 +40,7 @@ public class DBStatusPanel extends JPanel {
         } catch (Exception e) {
             statusLabel.setText("DB Status: Error");
             statusLabel.setForeground(Color.RED);
-            e.printStackTrace();
+          
         }
     }
 }

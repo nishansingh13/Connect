@@ -16,7 +16,7 @@ public class ConnectionManager {
             System.out.println("Database connection established");
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Database connection error: " + e.getMessage());
-            e.printStackTrace(); 
+        
         }
     }
     
